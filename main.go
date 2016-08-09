@@ -1,11 +1,11 @@
 package main
 
 import (
+	"crypto/rand"
 	"fmt"
 	"github.com/jawher/mow.cli"
 	"math"
 	"math/big"
-	"crypto/rand"
 	"os"
 	"strings"
 )
@@ -25,16 +25,6 @@ var (
 type Dice struct {
 	Die    []*Die
 	Result int64
-}
-
-func NewDice(count int) *Dice {
-	dice := &Dice{
-		Die: make([]*Die, count),
-	}
-	for i := 0; i < count; i++ {
-		dice.Die[i] = &Die{}
-	}
-	return dice
 }
 
 func (dice *Dice) Roll() {
@@ -58,6 +48,16 @@ func (dice *Dice) Roll() {
 	}
 	dice.Result = result
 
+}
+
+func NewDice(count int) *Dice {
+	dice := &Dice{
+		Die: make([]*Die, count),
+	}
+	for i := 0; i < count; i++ {
+		dice.Die[i] = &Die{}
+	}
+	return dice
 }
 
 type Die struct {
