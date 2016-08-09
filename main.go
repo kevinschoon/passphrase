@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"github.com/jawher/mow.cli"
 	"math"
-	"math/rand"
+	"math/big"
+	"crypto/rand"
 	"os"
 	"strings"
-	"time"
 )
 
-const DieSides int = 6
+const DieSides int64 = 6
 
 var (
 	app         = cli.App("passphrase", "Generate random word based passphrases")
@@ -65,11 +65,19 @@ type Die struct {
 }
 
 func (die *Die) Roll() {
-	for {
-		die.Result = int64(rand.Intn(DieSides))
-		if die.Result > 0 {
-			break
-		}
+	die.Result = randomNumber(DieSides)
+}
+
+func randomNumber(max int64) int64 {
+	var n *big.Int
+	n, err := rand.Int(rand.Reader, big.NewInt(max))
+	if err != nil {
+		panic(err)
+	}
+	if n.Int64() > 0 {
+		return n.Int64()
+	} else {
+		return randomNumber(max)
 	}
 }
 
@@ -108,10 +116,10 @@ func generate() {
 		passPhrase += word
 	}
 	if *specialChar {
-		passPhrase += SpecialCharacters[rand.Intn(len(SpecialCharacters))]
+		passPhrase += SpecialCharacters[randomNumber(int64(len(SpecialCharacters)))]
 	}
 	if *digit {
-		passPhrase += Digits[rand.Intn(len(Digits))]
+		passPhrase += Digits[randomNumber(int64(len(Digits)))]
 	}
 	if *verbose {
 		fmt.Println("Passphrase entropy: ", math.Log2(float64(len(wordList)))*float64(*roles))
@@ -125,8 +133,4 @@ func main() {
 		fmt.Println("Error: ", err.Error())
 		os.Exit(1)
 	}
-}
-
-func init() {
-	rand.Seed(time.Now().UnixNano())
 }
