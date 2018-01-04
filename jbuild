@@ -1,0 +1,7 @@
+(executable
+ ((name cmd)
+  (libraries (core))
+  (preprocess (pps (ppx_jane)))
+  ))
+
+(jbuild_version 1)
